@@ -10,11 +10,18 @@
 using namespace std;
 
 const int MOD = 2;
+const int BLOCK_SIZE = 4;
 
+/*
+ * Сложение в нашем поле
+ */
 int add(int a, int b) {
     return (a + b + MOD) % MOD;
 }
 
+/*
+ * Умножение в наше поле
+ */
 int mul(int a, int b) {
     return (a * b) % MOD;
 }
@@ -39,9 +46,9 @@ public:
         data.assign(n, vector<int>(m, 0));
     }
 
-    explicit matrix(bitset<4> a) {
-        init(4, 1);
-        for (int i = 0; i < 4; ++i)
+    explicit matrix(bitset<BLOCK_SIZE> a) {
+        init(BLOCK_SIZE, 1);
+        for (int i = 0; i < BLOCK_SIZE; ++i)
             data[i][0] = a[i];
     }
 

@@ -10,8 +10,6 @@
 
 mt19937 rnd(chrono::steady_clock::now().time_since_epoch().count());
 
-const int BLOCK_SIZE = 4;
-
 const matrix G({
                        {1, 0, 1, 1},
                        {1, 1, 0, 1},
@@ -28,14 +26,17 @@ const matrix H({
                        {1, 0, 1, 0, 1, 0, 1},
                });
 
+// Получить из блока битов кодовое слово
 matrix code(const matrix &block) {
     return G * block;
 }
 
+// Получить контрольную сумму
 matrix getControlSum(const matrix &msg) {
     return H * msg;
 }
 
+// Найти, какой бит кодового слова был испорчен
 int getValue(const matrix &control_sum) {
     int ret = 0;
     int cur_pow = 1;
@@ -46,6 +47,7 @@ int getValue(const matrix &control_sum) {
     return ret - 1;
 }
 
+// Разбить строку на битовые блоки
 vector<matrix> getBlocks(string &s) {
     vector<matrix> ret;
     for (char &c : s) {
@@ -68,12 +70,14 @@ vector<matrix> getBlocks(string &s) {
     return ret;
 }
 
+// Испортить один бит кодового слова
 void messUp(vector<matrix> &msg) {
     int pos = (int) (rnd() % (int) msg.size());
     int row = (int) (rnd() % (int) msg[pos].n);
     msg[pos](row, 0) = add(msg[pos](row, 0), 1);
 }
 
+// Раскодировать маску в символ
 char getSymbol(bitset<BLOCK_SIZE> f_half, bitset<BLOCK_SIZE> s_half) {
     bitset<8> mrg;
     for (int i = 0; i < BLOCK_SIZE; ++i)
@@ -84,6 +88,7 @@ char getSymbol(bitset<BLOCK_SIZE> f_half, bitset<BLOCK_SIZE> s_half) {
 }
 
 int main() {
+    // Запомним, из каких блоков какие получаются кодовые слова для раскодирования
     map<int, bitset<BLOCK_SIZE>> decode;
 
     for (int mask = 0; mask < (1 << BLOCK_SIZE); ++mask) {
